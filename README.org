@@ -1,0 +1,26 @@
+#+TITLE:     ssh-clj
+#+SUBTITLE:  clojure wrapper for mina sshd client
+#+KEYWORDS:  clojure, ssh, mina
+#+LANGUAGE:  en
+
+ssh-clj is primarily a wrapper for a ssh clojure client using the mina sshd
+java library
+
+* installation
+
+#+BEGIN_SRC sh
+lein install
+#+END_SRC
+
+
+* Implemented
+** ssh sessions
+*** keep alive / heartbeat
+** command execution
+** tunneling
+*** local
+
+* TODO
+** remote tunneling
+** sftp
+** interactive session
