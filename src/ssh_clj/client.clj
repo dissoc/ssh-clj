@@ -3,13 +3,34 @@
    [clojure.java.io :as io]
    [ssh-clj.forwarding :refer [forwarding-filter-all]])
   (:import
+   (java.io ByteArrayOutputStream)
    (java.time Duration)
+   (java.util EnumSet)
    (org.apache.sshd.client SshClient)
+   (org.apache.sshd.client.channel ClientChannelEvent)
    (org.apache.sshd.client.session ClientSession)
    (org.apache.sshd.common.keyprovider KeyIdentityProvider)
    (org.apache.sshd.common.util.security SecurityUtils)
    (org.apache.sshd.core CoreModuleProperties)
    (org.apache.sshd.scp.client ScpClient ScpClientCreator)))
+
+
+(defn execute-command
+  [^ClientSession session
+   ^String command
+   & {:keys [timeout]
+      :or   {timeout 10000}}]
+  (let [channel (.createExecChannel session command)]
+    (with-open [std-out (new ByteArrayOutputStream)
+                std-err (new ByteArrayOutputStream)]
+      (.setOut channel std-out)
+      (.setErr channel std-err)
+      (-> channel
+          .open
+          (.verify timeout))
+      (-> channel
+          (.waitFor (EnumSet/of ClientChannelEvent/CLOSED) 0))
+      (String. (.toByteArray std-out)))))
 
 (defn scp-download-bytes
   [^ScpClient scp-client remote-file-path]
