@@ -1,6 +1,9 @@
 (ns ssh-clj.forwarding
   (:import
+   (org.apache.sshd.client.session ClientSession)
+   (org.apache.sshd.client.session.forward ExplicitPortForwardingTracker)
    (org.apache.sshd.common.forward PortForwardingEventListener)
+   (org.apache.sshd.common.util.net SshdSocketAddress)
    (org.apache.sshd.server.forward ForwardingFilter)))
 
 ;; TODO support custom filtering
@@ -82,3 +85,29 @@
         [this session address reason]
       (when torn-down-dynamic-tunnel
         (torn-down-dynamic-tunnel [this session address reason])))))
+
+(defn add-port-forwarding-event-listener
+  [^ClientSession session]
+  (.addPortForwardingEventListener session
+                                   (port-forwarding-event-listener)))
+
+(defn ^ExplicitPortForwardingTracker forward-local-port
+  "this will create a mapping of the local system port to the
+  remote system port.
+
+  NOTE: in many cases the remote host is likely localhost, meaning
+  the localhost of the remote system.
+
+  the following map shows how to forward port 12345 on the local system
+  to port 54321 of the remote system:
+  {:local {:host \"127.0.0.1\"
+           :port 12345}
+   :remote {:host \"127.0.0.1\"
+            :port 54321}}
+  "
+  [^ClientSession session {local  :local
+                           remote :remote}]
+  (.createLocalPortForwardingTracker
+   session
+   (new SshdSocketAddress (:host local) (:port local))
+   (new SshdSocketAddress (:host remote) (:port remote))))
