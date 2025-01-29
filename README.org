@@ -9,9 +9,38 @@ java library
 * installation
 
 #+BEGIN_SRC sh
-lein install
+  lein install
 #+END_SRC
 
+* usage
+
+#+BEGIN_SRC clojure
+  (:require [ssh-clj.client :as client]
+            [ssh-clj.forwarding :as forwarding])
+
+  (def my-client (create-client :enable-forwarding? true))
+
+  (def my-session (create-session my-client
+                                  "remote-host-ip-or-name"
+                                  22 ;; ssh port (default 22)
+                                  :user "remote-user-name"
+                                  :key-path "/mnt/keys/mykey"))
+
+  (println (execute-command my-session "ls -lah /tmp"))
+
+  (def my-scp-client (create-scp-client my-session))
+
+  ;; gets the remote file and returns the bytes of the file
+  (def myfile-bytes (scp-download-bytes my-scp-client "/tmp/myfile"))
+
+  ;; forwards poer 12345 on local system to the remote system port 54321
+  (def forwading-tracker (forwading/forward-local-port
+                          my-session
+                          {:local {:host "127.0.0.1"
+                                   :port 12345}
+                           :remote {:host "127.0.0.1"
+                                    :port 54321}}))
+#+END_SRC
 
 * Implemented
 ** ssh sessions
@@ -24,3 +53,5 @@ lein install
 ** remote tunneling
 ** sftp
 ** interactive session
+** tests
+tests will likely require mina ssh server wrapper
