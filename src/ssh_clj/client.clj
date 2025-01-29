@@ -5,10 +5,20 @@
   (:import
    (java.time Duration)
    (org.apache.sshd.client SshClient)
-   [org.apache.sshd.client.session ClientSession]
+   (org.apache.sshd.client.session ClientSession)
    (org.apache.sshd.common.keyprovider KeyIdentityProvider)
    (org.apache.sshd.common.util.security SecurityUtils)
-   (org.apache.sshd.core CoreModuleProperties)))
+   (org.apache.sshd.core CoreModuleProperties)
+   (org.apache.sshd.scp.client ScpClient ScpClientCreator)))
+
+(defn scp-download-bytes
+  [^ScpClient scp-client remote-file-path]
+  (.downloadBytes scp-client remote-file-path))
+
+(defn ^ScpClient create-scp-client
+  [^ClientSession session]
+  (let [creator (ScpClientCreator/instance)]
+    (.createScpClient creator session)))
 
 (defn ^SshClient create-client
   [& {:keys [enable-forwarding? keepalive-interval]
@@ -23,7 +33,6 @@
       (.setForwardingFilter client (forwarding-filter-all)))
     (.start client)
     client))
-
 
 (defn load-key-pair-identities [key-pair-path]
   (let [input-stream (-> key-pair-path
