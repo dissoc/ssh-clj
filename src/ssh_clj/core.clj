@@ -1,1 +1,0 @@
-(ns ssh-clj.core)

@@ -6,4 +6,4 @@
                  [org.apache.sshd/sshd-core "2.14.0"]
                  [org.apache.sshd/sshd-scp "2.14.0"]
                  [org.clojure/clojure "1.11.1"]]
-  :repl-options {:init-ns ssh-clj.core})
+  :repl-options {:init-ns ssh-clj.client})
