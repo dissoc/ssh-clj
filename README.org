@@ -6,6 +6,10 @@
 ssh-clj is primarily a wrapper for a ssh clojure client using the mina sshd
 java library
 
+This is currently under development and subject to change. At the current state
+this is more of an example on how to interop with mina sshd than a mature
+clojure library
+
 * installation
 
 #+BEGIN_SRC sh
