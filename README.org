@@ -33,7 +33,7 @@ java library
   ;; gets the remote file and returns the bytes of the file
   (def myfile-bytes (scp-download-bytes my-scp-client "/tmp/myfile"))
 
-  ;; forwards poer 12345 on local system to the remote system port 54321
+  ;; forwards port 12345 on local system to the remote system port 54321
   (def forwading-tracker (forwading/forward-local-port
                           my-session
                           {:local {:host "127.0.0.1"
